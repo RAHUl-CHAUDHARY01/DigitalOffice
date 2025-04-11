@@ -17,6 +17,10 @@ app.use(cookieParser())
 
 import orgRouter from './routes/org.routes.js';
 import inviteRouter from './routes/invite.route.js';
+
 app.use('/api/v1/org', orgRouter);
 app.use('/api/v1/invite', inviteRouter);
-export { app };
+
+
+
+export default app;
