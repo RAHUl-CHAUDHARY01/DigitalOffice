@@ -9,7 +9,7 @@ const sqldb = mysql.createPool({
   ssl: false, // Set to true if your RDS requires SSL
 });
 
-async function verifyMysqlConnection() {
+const verifyMysqlConnection = async() => {
     try {
       const [rows] = await sqldb.query('SELECT NOW() AS time');
       console.log('✅ MySQL is connected. Current time:', rows[0].time);

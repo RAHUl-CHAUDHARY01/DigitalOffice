@@ -1,12 +1,12 @@
 import app from "./app.js";
-import connectDB from "./DB/dbconnect.js";
+import mongoConnectDb from "./DB/mongodbconnect.js";
 import { verifyMysqlConnection } from "./DB/mysqldbconnect.js";
 import 'dotenv/config'
 
 verifyMysqlConnection()
   .then(()=>{
 
-    connectDB()
+    mongoConnectDb()
     .then(() => {
         app.listen(process.env.PORT || 8000, () => {
           console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
@@ -18,5 +18,5 @@ verifyMysqlConnection()
 
   })
   .catch((err)=>{
-    console.log("MySql connection failed did not reached to mongodb",err);
+    console.log("Error Connecting...",err);
   })
