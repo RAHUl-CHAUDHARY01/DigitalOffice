@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js"
 
 import { ApiResponse } from "../utils/ApiResponse.js"
 import jwt from "jsonwebtoken"
+
 const generateAccessAndRefereshTokens = async (orgId) => {
     try {
         const org = await Org.findById(orgId)
@@ -23,9 +24,9 @@ const generateAccessAndRefereshTokens = async (orgId) => {
 }
 
 const registerOrg = asyncHandler(async (req, res) => {
-    console.log("sadsadcsdcsdc");
+   
     const { orgname , email,password } = req.body
-    // console.log(req.body)
+
     if (orgname === "") {
         throw new ApiError(400, "OrganisationName is required")
     }
