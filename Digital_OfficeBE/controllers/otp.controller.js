@@ -1,10 +1,11 @@
-import { User} from '../models/user.js'
+import db from '../models/index.js'; 
+const { User } = db;
 
 import {
     generateOTP,
     storeOTPTemp,
     verifyStoredOTP,
-    sendOTPToEmail,
+    sendOtpByEmail,
     deleteStoredOTP,
     markOTPVerified,
 } from '../utils/otp.helper.js';
@@ -25,7 +26,9 @@ export const sendOtp = async (req, res) => {
     console.log('otp is', otp);
 
     await storeOTPTemp({ email, otp });
-    await sendOTPToEmail({ email, otp });
+    const b=await sendOtpByEmail({ email, otp });
+
+
 
     return res.status(200).json({ message: "OTP sent successfully" });
   } catch (err) {
@@ -45,9 +48,9 @@ export const verifyOtp = async (req, res) => {
       }
   
       // OTP is valid — delete it
-      await deleteStoredOTP({ email });
+      await deleteStoredOTP(email );
   
-      await markOTPVerified({ email});
+      await markOTPVerified( email);
   
       return res.status(200).json({ message: "OTP verified successfully" });
     } catch (err) {

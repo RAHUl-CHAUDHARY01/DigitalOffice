@@ -1,9 +1,10 @@
-// import { Org } from "../models/org.model.js"
 // import { asyncHandler } from "../utils/asyncHandler.js"
 // import { ApiError } from "../utils/ApiError.js"
-
 // import { ApiResponse } from "../utils/ApiResponse.js"
 // import jwt from "jsonwebtoken"
+
+// import db from '../models/index.js'
+// const {User,Company,CompanyMembership}=db
 
 // const generateAccessAndRefereshTokens = async (orgId) => {
 //     try {
@@ -23,40 +24,7 @@
 //     }
 // }
 
-// const registerOrg = asyncHandler(async (req, res) => {
-   
-//     const { orgname , email,password } = req.body
-
-//     if (orgname === "") {
-//         throw new ApiError(400, "OrganisationName is required")
-//     }
-//     if (email === "") {
-//         throw new ApiError(400, "email is required")
-//     }
-//     if (password === "") {
-//         throw new ApiError(400, "password is required")
-//     }
-//     const existedOrg = await Org.findOne({  //it will find the first similar entry if found by it
-//         $or: [{ email }, { orgname }]
-//     })
-//     if (existedOrg) {
-//         throw new ApiError(409, "Organisation with same orgname or email exists")
-//     }
-//     const org = await Org.create({
-//         email,
-//         password,
-//         orgname: orgname.toLowerCase()
-//     })
-//     const createdOrg = await Org.findById(org._id).select("-password -refreshTokens")
-//     if (!createdOrg) {
-//         throw new ApiError(500, "something went wrong while registering the organisation")
-//     }
-
-//     return res.status(201).json(
-//         new ApiResponse(200, createdOrg, "Organisation registered Successfully!!!")
-//     )
-// })
-// const loginOrg = asyncHandler(async (req, res) => {
+//   const loginOrg = asyncHandler(async (req, res) => {
 //     const {email,orgname,password} = req.body;
 //     console.log(req.body);
 //     if (!orgname && !email) {
@@ -92,6 +60,9 @@
 //             )
 //         )
 // })
+
+
+
 // const logoutOrg = asyncHandler(async (req, res) => {
 //     console.log(req)
 //     await Org.findByIdAndUpdate(
@@ -177,4 +148,4 @@
 
 // })
 
-// export {registerOrg , loginOrg, logoutOrg,deleteAccount , refreshAccessToken};
+// export {registerCompany , loginOrg, logoutOrg,deleteAccount , refreshAccessToken};

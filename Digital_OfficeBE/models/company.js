@@ -1,6 +1,6 @@
-import { Model } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 
-export default (sequelize) => {
+export default (sequelize, DataTypes) => {
 
   class Company extends Model {
 
@@ -11,46 +11,48 @@ export default (sequelize) => {
         as: 'users', // Alias for the association
       });
     }
-    
-    
+
+
   }
 
   Company.init(
     {
+
+      company_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       name: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
       },
       domain: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       address: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      logoUrl: Sequelize.STRING, 
-      
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      }
+
+      logo_url: DataTypes.STRING,
+
+
     },
     {
       sequelize,
       modelName: 'Company',
       tableName: 'Companies',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       underscored: true,
-      timestamps: false,
     }
   );
 

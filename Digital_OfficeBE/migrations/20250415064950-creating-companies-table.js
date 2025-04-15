@@ -27,12 +27,13 @@ export default {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      logoUrl: Sequelize.STRING, // Optional field
-      createdAt: {
+      logo_url: Sequelize.STRING, // Optional field
+      
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       }

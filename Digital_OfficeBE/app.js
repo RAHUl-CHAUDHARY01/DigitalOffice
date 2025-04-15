@@ -15,11 +15,13 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 app.use(express.static("public"))
 app.use(cookieParser())
 
-// import orgRouter from './routes/org.routes.js';
-// import inviteRouter from './routes/invite.route.js';
+import otpRouter from './routes/otp.routes.js';
+import companyRouter from './routes/company.routes.js'
 
-// app.use('/api/v1/org', orgRouter);
-// app.use('/api/v1/invite', inviteRouter);
+
+app.use('/api/v1/otp',otpRouter );
+app.use('/api/v1/company',companyRouter);
+
 
 
 

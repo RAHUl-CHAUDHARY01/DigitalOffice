@@ -16,7 +16,7 @@ export const generateOTP = () => {
 // Store OTP with 5-minute expiry
 export const storeOTPTemp = async ({ email, otp }) => {
   const key = `otp:${email}`;
-  await redis.set(key, otp, 'EX', 300); // 5 minutes
+  const a=await redis.set(key, otp, 'EX', 300); // 5 minutes
 };
 
 // Verify OTP
@@ -27,13 +27,13 @@ export const verifyStoredOTP = async ({ email,otp }) => {
 };
 
 // Delete OTP after verification
-export const deleteStoredOTP = async ({ email}) => {
+export const deleteStoredOTP = async (email) => {
   const key = `otp:${email}`;
   await redis.del(key);
 };
 
 // Check if OTP was verified before registering
-export const isOTPVerified = async ({ email}) => {
+export const isOTPVerified = async ( email) => {
   const key = `otp_verified:${email}`;
   const verified = await redis.get(key);
   console.log(verified);
@@ -41,7 +41,7 @@ export const isOTPVerified = async ({ email}) => {
 };
 
 // After successful OTP verification, mark it verified
-export const markOTPVerified = async ({ email }) => {
+export const markOTPVerified = async ( email ) => {
     const identifier = email ;
   
     // if (!identifier) {
@@ -67,25 +67,22 @@ const transporter = nodemailer.createTransport({
   
 
   
-  const sendOtpByEmail = async (email, otp) => {
-    const mailOptions = {
-      from: `"E commerce" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: 'Your OTP Code',
-      html: `<p>Your OTP is <b>${otp}</b>. It is valid for 5 minutes.</p>`,
-    };
-  
-    const info = await transporter.sendMail(mailOptions);
-    console.log('OTP sent via email:', info.response);
-  };
-  
-
-  
-  export const sendOTPToEmail = async ({ email,otp }) => {
+  export const sendOtpByEmail = async ({email, otp}) => {
+    
     if (email) {
-      await sendOtpByEmail(email, otp);
+
+      const mailOptions = {
+        from: `"Digital Office " <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: 'Your OTP Code',
+        html: `<p>Your OTP is <b>${otp}</b>. It is valid for 5 minutes.</p>`,
+      };
+    
+      const info = await transporter.sendMail(mailOptions);
+      console.log('OTP sent via email:', info.response);
     } 
     else {
       throw new Error("No email  provided to send OTP.");
     }
+
   };
