@@ -17,11 +17,12 @@ app.use(cookieParser())
 
 import otpRouter from './routes/otp.routes.js';
 import companyRouter from './routes/company.routes.js'
+import userRouter from './routes/user.routes.js'
 
 
 app.use('/api/v1/otp',otpRouter );
 app.use('/api/v1/company',companyRouter);
-
+app.use('/api/v1/users',userRouter);
 
 
 

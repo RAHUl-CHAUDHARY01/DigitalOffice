@@ -27,7 +27,7 @@ export async function up(queryInterface, Sequelize) {
       onDelete: 'CASCADE',
     },
     role: {
-      type: Sequelize.ENUM('Admin', 'HR', 'Employee'),
+      type: Sequelize.ENUM('Admin', 'HR', 'Employee','Manager'),
       allowNull: false,
     },
     created_at: {

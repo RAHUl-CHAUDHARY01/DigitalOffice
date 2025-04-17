@@ -36,6 +36,14 @@ export default {
         type: Sequelize.ENUM('active', 'invited', 'inactive'),
         allowNull: false,
       },
+      profile_image: {
+        type: Sequelize.STRING(500), // VARCHAR(500)
+        allowNull: true,
+      },
+      refresh_token: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

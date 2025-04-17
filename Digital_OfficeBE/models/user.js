@@ -47,6 +47,14 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.ENUM('active', 'invited', 'inactive'),
         allowNull: false,
       },
+      profile_image: {
+        type: DataTypes.STRING(500), 
+        allowNull: true,
+      },
+      refresh_token: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
 
     },
     {
@@ -61,18 +69,19 @@ export default (sequelize, DataTypes) => {
   );
 
   User.beforeCreate(async (user) => {
-    if (user.password) {
+    if (user.password && user.changed('password')) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(user.password, salt);
     }
   });
-
+  
   User.beforeUpdate(async (user) => {
-    if (user.password) {
+    if (user.password && user.changed('password')) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(user.password, salt);
     }
   });
+  
 
   return User;
 };

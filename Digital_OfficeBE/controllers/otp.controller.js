@@ -26,7 +26,7 @@ export const sendOtp = async (req, res) => {
     console.log('otp is', otp);
 
     await storeOTPTemp({ email, otp });
-    const b=await sendOtpByEmail({ email, otp });
+    await sendOtpByEmail({ email, otp });
 
 
 
