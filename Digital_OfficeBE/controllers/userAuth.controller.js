@@ -2,6 +2,9 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 import jwt from "jsonwebtoken"
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import { setCookie } from '../utils/cookie.js';
+import { isOTPVerified } from '../utils/otp.helper.js';
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+
 import db from '../models/index.js'
 const {User,CompanyMembership}=db
 
@@ -82,6 +85,123 @@ const loginUser = asyncHandler(async (req, res) => {
     });
   });
 
+
+  const logoutUser = asyncHandler(async (req, res) => {
+    try {
+      const user = await User.findByPk(req.user.user_id);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+  
+      user.refresh_token = null;
+      await user.save();
+  
+      res.clearCookie('access_token');
+      res.clearCookie('refresh_token');
+  
+      return res.status(200).json({ message: 'Logged out successfully' });
+    } catch (err) {
+      return res.status(500).json({ message: 'Logout failed', error: err.message });
+    }
+  });
+
+  const getProfile = async (req, res) => {
+    try {
+      const user = await User.findByPk(req.user.user_id, {
+        attributes: ['user_id', 'name', 'email', 'profile_image', 'status', 'company_id', 'created_at'],
+      });
+  
+      if (!user) return res.status(404).json({ message: 'User not found' });
+  
+      return res.status(200).json({ user });
+    } catch (err) {
+      return res.status(500).json({ message: 'Failed to fetch profile', error: err.message });
+    }
+  };
+
+  const updatePassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+  
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current and new passwords are required' });
+    }
+  
+    const user = await User.findByPk(req.user.user_id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+  
+    const isMatch = await User.comparePassword(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+  
+    user.password = newPassword; // this will trigger your beforeUpdate hook
+    await user.save();
+  
+    return res.status(200).json({ message: 'Password updated successfully' });
+  });
+
+
+
+  const updateEmail = asyncHandler(async (req, res) => {
+    const userId = req.user.user_id; // assumes auth middleware sets req.user
+    const { newEmail} = req.body;
+  
+    if (!newEmail) {
+      return res.status(400).json({ message: 'New email is required.' });
+    }
+  
+    // Verify OTP from Redis
+    const verified = await isOTPVerified(newEmail);
+  
+    if (!verified) {
+      return res.status(400).json({ message: 'OTP not verified or expired. Please verify OTP before updating email.' });
+    }
+  
+
+    // Update the email
+    const user = await User.findByPk(userId);
+  
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+  
+    user.email = newEmail;
+    await user.save();
+  
+    return res.status(200).json({ message: 'Email updated successfully.', newEmail });
+  });
+
+
+
+  const updateProfilePic = asyncHandler(async (req, res) => {
+    try {
+      const user = await User.findByPk(req.user.user_id);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+    
+        const imageLocalPath = req.file.path;
+      
+         
+        if (!imageLocalPath) {
+            res.status(400).json({message:"Image local path is required"})
+        }
+    
+        const image = await uploadOnCloudinary(imageLocalPath)
+       
+        // console.log('image',image)
+    
+        if (!image) {
+            res.status(400).json({message:"image object uploaded on cloudinary is required"})
+        }
+
+        const imagePath=image.url;
+        user.profile_image = imagePath;
+        await user.save();
+        return res.status(200).json({ message: 'Profile picture updated', profile_image: imagePath });
+      }
+    catch (err) {
+      return res.status(500).json({ message: 'Error updating profile picture', error: err.message });
+    }
+  });
+
+
   const refreshAccessToken = asyncHandler(async (req, res) => {
 
   const tokenFromCookie = req.cookies.refresh_token;
@@ -141,4 +261,5 @@ const loginUser = asyncHandler(async (req, res) => {
 
 
 
-export {loginUser,refreshAccessToken};
+
+export {loginUser,logoutUser,refreshAccessToken,updatePassword,getProfile,updateEmail,updateProfilePic};

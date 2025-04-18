@@ -1,52 +1,20 @@
-// import { ApiError } from "../utils/ApiError.js";
-// import { asyncHandler } from "../utils/asyncHandler.js";
-// import jwt from "jsonwebtoken";
-// import { Org } from "../models/org.model.js";
-// import {User} from "../models/user.model.js";
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 
-// // ✅ Smart JWT Verification Middleware
-// export const verifyJWT = asyncHandler(async (req, _, next) => {
-//     try {
-//         // ✅ Extract token from cookies or headers
-//         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
-//         console.log("token" , token);
+const authMiddleware = (req, res, next) => {
+  const token = req.cookies?.access_token;
 
-//         if (!token) {
-//             throw new ApiError(401, "Unauthorized request");
-//         }
+  if (!token) {
+    return res.status(401).json({ message: 'Access token missing' });
+  }
 
-//         // ✅ Decode token
-//         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-//         console.log("decodedToken",decodedToken)
-//         // ✅ Check if token contains orgId or userId
-//         if (decodedToken?._id) {
-//             // ✅ This is an Organization's token
-//             const org = await Org.findById(decodedToken._id).select("-password -refreshToken");
-//             if (!org) {
-//                 throw new ApiError(401, "Invalid Access Token");
-//             }
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decoded; // Attach user info to request
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid or expired access token' });
+  }
+};
 
-//             // ✅ Attach org to req
-//             req.org = org;
-//             req.user = null;  // Reset user to avoid misuse
-//         }
-//         else if (decodedToken?.id) {
-//             // ✅ This is a User's token (from invite link)
-//             const user = await User.findById(decodedToken.id).select("-password");
-//             if (!user) {
-//                 throw new ApiError(401, "Invalid Access Token");
-//             }
-
-//             // ✅ Attach user to req
-//             req.user = user;
-//             req.org = null;  // Reset org to avoid misuse
-//         }
-//         else {
-//             throw new ApiError(401, "Invalid Token Structure");
-//         }
-
-//         next();
-//     } catch (error) {
-//         throw new ApiError(401, error?.message || "Invalid access token");
-//     }
-// });
+export default authMiddleware;

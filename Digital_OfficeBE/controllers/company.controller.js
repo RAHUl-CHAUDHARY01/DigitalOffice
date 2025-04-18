@@ -25,7 +25,7 @@ const registerCompany = asyncHandler(async (req, res) => {
       if (!address) throw new ApiError(400, "address is required");
     
       const verifiedCompanyEmail = await isOTPVerified(companyEmail);
-      console.log(verifiedCompanyEmail)
+
       if (!verifiedCompanyEmail) {
         return res.status(403).json({ message: "Please verify company E-Mail before registering" });
       }
